@@ -14,4 +14,9 @@ export const createEventSchema = z.object({
   eventDate: z.iso.datetime({
     message: 'Invalid date format. Use ISO 8601 format.',
   }),
+  ticketPrice: z.number().positive('Ticket price must be a positive number'), // ✅ add
+  quantityAvailable: z
+    .number()
+    .int()
+    .positive('Quantity must be a positive number'), // ✅ add
 });

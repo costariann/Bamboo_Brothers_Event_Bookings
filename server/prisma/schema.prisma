@@ -23,6 +23,12 @@ model Event {
 
   ticketType  TicketType[]
 
+  orders Order[]
+
+  ticketPrice Decimal @db.Decimal(10, 2)
+
+quantityAvailable Int
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -40,4 +46,97 @@ model TicketType {
 
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+
+  action      String
+  entityType  String
+  entityId    String?
+
+  description String?
+
+  adminId     String?
+  admin       Admin?   @relation(fields: [adminId], references: [id])
+
+  metadata    Json?
+
+  createdAt   DateTime @default(now())
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         AdminRole @default(GATE_ADMIN)
+  activityLogs ActivityLog[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  GATE_ADMIN
+}
+
+model Order {
+  id String @id @default(cuid())
+
+  buyerName String
+  buyerEmail String
+  buyerPhone String
+
+  quantity Int
+
+  totalAmount Decimal @db.Decimal(10, 2)
+
+  paymentReference String? @unique
+
+  paymentStatus PaymentStatus @default(PENDING)
+
+  eventId String
+  event Event @relation(fields: [eventId], references: [id])
+
+  attendees Attendee[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attendee {
+  id String @id @default(cuid())
+
+  fullName String
+
+  orderId String
+  order Order @relation(fields: [orderId], references: [id])
+
+  ticket Ticket?
+
+  createdAt DateTime @default(now())
+}
+
+model Ticket {
+  id String @id @default(cuid())
+
+  code String @unique
+
+  qrCode String?
+
+  checkedIn Boolean @default(false)
+
+  checkedInAt DateTime?
+
+  attendeeId String @unique
+  attendee Attendee @relation(fields: [attendeeId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
 }

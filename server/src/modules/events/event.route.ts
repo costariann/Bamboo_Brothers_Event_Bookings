@@ -2,8 +2,8 @@ import { Router } from 'express';
 
 import * as controller from './event.controller';
 
-import { createEventSchema } from '../event.validation';
 import { validateRequest } from '../../middleware/validateRequest';
+import { createEventSchema } from './event.validation';
 
 const eventRouter = Router();
 

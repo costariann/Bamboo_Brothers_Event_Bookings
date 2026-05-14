@@ -26,6 +26,10 @@ export const createApp = (): express.Application => {
     app.use(morgan('combined'));
   }
 
+  app.use(
+    '/api/payments/webhook/paystack',
+    express.raw({ type: 'application/json' }),
+  );
   //Body parsing middleware
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true, limit: '10mb' }));

@@ -13,5 +13,8 @@ CREATE TABLE "Event" (
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
 );
 
+ALTER TABLE "Event" ADD COLUMN "ticketPrice" DECIMAL(10,2) NOT NULL DEFAULT 0.00;
+ALTER TABLE "Event" ADD COLUMN "quantityAvailable" INTEGER NOT NULL DEFAULT 0;
+
 -- CreateIndex
 CREATE UNIQUE INDEX "Event_slug_key" ON "Event"("slug");

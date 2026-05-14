@@ -1,27 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
-
-export interface AppError extends Error {
-  statusCode?: number;
-  status?: string;
-}
+import { AppError } from '../utils/AppError';
+import { success } from 'zod';
 
 export const errorHandler = (
-  err: AppError,
+  err: Error | AppError,
   _req: Request,
   res: Response,
   next: NextFunction,
 ): void => {
-  const statusCode = err.statusCode || 500;
-  const status = err.status || 'error';
+  console.error(err);
 
-  // If response was already sent, delegate to default Express error handler
-  if (res.headersSent) {
-    return next(err);
+  if (err instanceof AppError) {
+    res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+    });
+  } else {
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+    });
   }
-
-  res.status(statusCode).json({
-    status,
-    message: err.message || 'Internal Server Error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-  });
 };
